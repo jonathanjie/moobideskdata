@@ -14,8 +14,10 @@ import static java.util.Arrays.asList;
 
 public class Main {
 
+    public static final String OUTPUT_FILE_PATH = "E:/Moobidesk/Moobidesk/moobideskdata/DataflowPipeline/output.txt";
+
     private static String toDateHourString(Date date) {
-        String dateHour = Integer.toString(date.getMonth()) + " Date: " + Integer.toString(date.getDate())
+        String dateHour = "Month: " + Integer.toString(date.getMonth()) + " Date: " + Integer.toString(date.getDate())
                 + " Hour: " + Integer.toString(date.getHours());
         return dateHour;
     }
@@ -63,7 +65,7 @@ public class Main {
 //        bw.close();
 
         //System.out.println(jsonFinalText);
-        Hashtable<String, Integer> numAgentsInHour = new Hashtable<>();
+        TreeMap<String, Integer> messagesEveryHour = new TreeMap<>();
 
         // read through all chats.json
         final CodecRegistry codecRegistry = CodecRegistries.fromProviders(asList(new ValueCodecProvider(),
@@ -75,7 +77,6 @@ public class Main {
 
         BsonArray docArray = arrayReader.decode(reader, DecoderContext.builder().build());
 
-        int hourIndex = 0;
         for (BsonValue document : docArray.getValues()) {
             //System.out.println(doc);
             long milliseconds = document.asDocument().get("createdAt").asDateTime().getValue();
@@ -83,20 +84,24 @@ public class Main {
 
             DateFormat simple = new SimpleDateFormat("dd MMM yyyy HH:mm:ss:SSS Z");
 
-            Integer val = numAgentsInHour.get(toDateHourString(date));
+            Integer val = messagesEveryHour.get(toDateHourString(date));
 
             if (val != null)
-                numAgentsInHour.put(toDateHourString(date), val + 1);
+                messagesEveryHour.put(toDateHourString(date), val + 1);
             else
-                numAgentsInHour.put(toDateHourString(date), 1);
+                messagesEveryHour.put(toDateHourString(date), 1);
 
         }
 
-        for (Map.Entry<String, Integer> entry : numAgentsInHour.entrySet()) {
-            System.out.println(entry.getKey() + " Value: " + entry.getValue());
+        StringBuilder lineContent = new StringBuilder();
+        for (Map.Entry<String, Integer> entry : messagesEveryHour.entrySet()) {
+            lineContent.append(entry.getKey()).append(" Number of messages: ").append(entry.getValue()).append("\n");
         }
 
-
+        BufferedWriter writer = new BufferedWriter(new FileWriter(OUTPUT_FILE_PATH));
+        System.out.println("Printing");
+        writer.write(lineContent.toString());
+        writer.close();
 
 //        Document doc = Document.parse(text);
 //
