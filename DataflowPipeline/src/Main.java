@@ -4,11 +4,10 @@ import org.bson.codecs.*;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.json.JsonReader;
+import org.bson.types.ObjectId;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static java.util.Arrays.asList;
@@ -78,6 +77,8 @@ public class Main {
 
         for (BsonValue document : docArray.getValues()) {
             //System.out.println(doc);
+            ObjectId id = document.asDocument().get("_id").asObjectId().getValue();
+            System.out.println(id.toString());
             long milliseconds = document.asDocument().get("updatedAt").asDateTime().getValue();
             Date date = new Date(milliseconds);
 
