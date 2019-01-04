@@ -20,7 +20,15 @@ GROUP BY year(conversation_createdat), month(conversation_createdat), day(conver
 channel
 ORDER BY year(conversation_createdat), month(conversation_createdat), day(conversation_createdat), hour(conversation_createdat);`
 
-const recommendationQuery = `SELECT ` ;
+const recommendationQuery = `SELECT year(chat.conversationcreatedAt) AS year, month(chat.conversationcreatedAt) AS month,
+day(chat.conversationcreatedAt) AS day,
+hour(chat.conversationcreatedAt) AS hour,
+COUNT(DISTINCT chat.agents) AS numAgents,
+COUNT(IF(abandoned = false, 1, NULL)) AS numConvosHandled,
+COUNT(IF(isSlaSuccess = true, 1, NULL))/COUNT(DISTINCT chat.conversation) as percentSla,
+INNER JOIN conversation-sla-log.js ON chat.conversation = conversation-sla-log.conversation,
+GROUP BY year(chat.conversationcreatedAt), month(chat.conversationcreatedAt), day(chat.conversationcreatedAt), hour(chat.conversationcreatedAt)
+ORDER BY year(chat.conversationcreatedAt), month(chat.conversationcreatedAt), day(chat.conversationcreatedAt), hour(chat.conversationcreatedAt);` 
 
 client.execute(forecastQuery).toPromise()
 .then(data => {
