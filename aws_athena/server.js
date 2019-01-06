@@ -1,6 +1,6 @@
 const fs = require('fs');
 const athena = require('athena-client');
-const forecastQuery = require('./queries/forecastQuery.js')
+const queries = require('./queries.js')
 
 const awsConfig  = JSON.parse(fs.readFileSync('./config.json'));
 const clientConfig = {
@@ -22,27 +22,7 @@ channel
 ORDER BY year(conversation_createdat), month(conversation_createdat), day(conversation_createdat), hour(conversation_createdat);`
 
 
-const forecastQuery = forecastQuery.getQuery();
-
-const recommendationQuery = `SELECT year(chat.conversationcreatedAt) AS year, month(chat.conversationcreatedAt) AS month,
-day(chat.conversationcreatedAt) AS day,
-hour(chat.conversationcreatedAt) AS hour,
-COUNT(DISTINCT chat.agents) AS numAgents,
-COUNT(IF(abandoned = false, 1, NULL)) AS numConvosHandled,
-COUNT(IF(isSlaSuccess = true, 1, NULL))/COUNT(DISTINCT chat.conversation) as percentSla
-FROM (chat INNER JOIN conversation-sla-log.js ON chat.conversation = conversation-sla-log.conversation)
-GROUP BY year(chat.conversationcreatedAt), month(chat.conversationcreatedAt), day(chat.conversationcreatedAt), hour(chat.conversationcreatedAt)
-ORDER BY year(chat.conversationcreatedAt), month(chat.conversationcreatedAt), day(chat.conversationcreatedAt), hour(chat.conversationcreatedAt);` 
-
-client.execute(athenaForecastQuery).toPromise()
-.then(data => {
-  fs.writeFileSync('logs.txt', JSON.stringify(data));
-  console.log('execution successful!')
-})
-.catch(err => console.log(err));
-
-
-  /**
+/**
    * PER HOUR
    * 
    * Forecast
@@ -70,14 +50,29 @@ client.execute(athenaForecastQuery).toPromise()
 
 
   Recommendation
-  6) numAgents
+  6) numAgents [done]
     - for each channel combi (voice, chat, email – 7 combi)
-  7) numConvosHandled
-    - for each channel combi
-  8) percentageMetSLA
-    - for each channel 
+
+  7) numConvosHandled [done]
+    - for each channel combi (voice, chat, email – 7 combi)
+
+  8) percentageMetSLA [done]
+    - for each channel (no combi?)
   */
 
+
+const forecastQuery = queries.getForecastQuery();
+const recommendationQuery = queries.getRecommendationQuery();
+
+client.execute(athenaForecastQuery).toPromise()
+.then(data => {
+  fs.writeFileSync('logs.txt', JSON.stringify(data));
+  console.log('execution successful!')
+})
+.catch(err => console.log(err));
+
+
+  
 
 
 // var AWS = require('aws-sdk');
