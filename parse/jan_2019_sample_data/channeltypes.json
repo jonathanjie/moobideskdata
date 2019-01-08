@@ -1,0 +1,121 @@
+[{
+	"_id" : "5b4328744b44980039687fc3",
+	"name" : "Email",
+	"logo" : "/images/channel_icons/email-icon.svg",
+	"status" : "active",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-09T09:18:44.861Z",
+	"createdAt" : "2018-07-09T09:18:44.861Z",
+	"__v" : 0
+},
+{
+	"_id" : "5b4328744b44980039687fc4",
+	"name" : "SMS",
+	"logo" : "/images/channel_icons/sms-icon.svg",
+	"status" : "active",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-09T09:18:44.866Z",
+	"createdAt" : "2018-07-09T09:18:44.866Z",
+	"__v" : 0
+},
+{
+	"_id" : "5b4328744b44980039687fc5",
+	"name" : "Voice",
+	"logo" : "/images/channel_icons/voice-icon.svg",
+	"status" : "active",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-09T09:18:44.867Z",
+	"createdAt" : "2018-07-09T09:18:44.867Z",
+	"__v" : 0
+},
+{
+	"_id" : "5b4328744b44980039687fc8",
+	"name" : "Line",
+	"logo" : "/images/channel_icons/line-icon.svg",
+	"status" : "inactive",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-09T09:18:44.868Z",
+	"createdAt" : "2018-07-09T09:18:44.868Z",
+	"__v" : 0
+},
+{
+	"_id" : "5b4328744b44980039687fc7",
+	"name" : "Web Chat",
+	"logo" : "/images/channel_icons/webchat-icon.svg",
+	"status" : "active",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-09T09:18:44.868Z",
+	"createdAt" : "2018-07-09T09:18:44.868Z",
+	"__v" : 0
+},
+{
+	"_id" : "5b4328744b44980039687fcb",
+	"name" : "Twitter",
+	"logo" : "/images/channel_icons/twitter-icon.svg",
+	"status" : "inactive",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-09T09:18:44.869Z",
+	"createdAt" : "2018-07-09T09:18:44.869Z",
+	"__v" : 0
+},
+{
+	"_id" : "5b4328744b44980039687fcc",
+	"name" : "WeChat",
+	"logo" : "/images/channel_icons/WeChat-active-icon.png",
+	"status" : "active",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-09T09:18:44.870Z",
+	"createdAt" : "2018-07-09T09:18:44.870Z",
+	"__v" : 0
+},
+{
+	"_id" : "5b4328744b44980039687fc9",
+	"name" : "Facebook",
+	"logo" : "/images/channel_icons/facebook-icon.svg",
+	"status" : "inactive",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-09T09:18:44.868Z",
+	"createdAt" : "2018-07-09T09:18:44.868Z",
+	"__v" : 0
+},
+{
+	"_id" : "5b4328744b44980039687fca",
+	"name" : "Instagram",
+	"logo" : "/images/channel_icons/instagram-icon.svg",
+	"status" : "inactive",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-09T09:18:44.869Z",
+	"createdAt" : "2018-07-09T09:18:44.869Z",
+	"__v" : 0
+},
+{
+	"_id" : "5b4328744b44980039687fc6",
+	"name" : "Telegram",
+	"logo" : "/images/channel_icons/telegram-active-icon.png",
+	"status" : "active",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-09T09:18:44.867Z",
+	"createdAt" : "2018-07-09T09:18:44.867Z",
+	"__v" : 0
+},
+{
+	"_id" : "5b5834ba2e4ec535c9103ecf",
+	"name" : "WhatsApp",
+	"logo" : "/images/channel_icons/whatsapp-active-icon.png",
+	"status" : "active",
+	"updater" : "mega.siswanto@mavenlab.com",
+	"creator" : "mega.siswanto@mavenlab.com",
+	"updatedAt" : "2018-03-20T09:52:48.806Z",
+	"createdAt" : "2018-03-20T09:52:48.806Z",
+	"__v" : 0
+}]

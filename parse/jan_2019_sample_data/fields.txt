@@ -1,0 +1,25 @@
+Moobidesk schema fields
+
+Agents
+1. All = "_id", "key", "channelTypesRep", "bot", "botName", "user", "campaign", "type", "status", "updater", "creator", "updatedAt", "createdAt", "awsAgent", "supervisor", "manager", "channelTypes", "concurrent", "__v", "auxcode", "remarks", "uuid"
+2. Timestamp = "createdAt", "updatedAt"
+
+Channel Types
+1. All = "_id", "name", "logo", "status", "updater", "creator", "updatedAt", "createdAt", "__v"
+2. Timestamp = "createdAt", "updatedAt"
+
+Chats
+1. All = "_id", "message", "direction", "channel", "queue", "agent", "conversation", "conversationKey", "service", "subject", "contact", "channelAccount", "channelType", "to", "from", "mtStatus", "moLog", "refId", "type", "status", "updater", "creator", "updatedAt", "createdAt", "mtCount", "attachments", "hasAttachments", "__v", "mtLogId"
+2. Timestamp = "createdAt", "updatedAt"
+
+Conversations
+1. All = "_id", "campaign", "contact", "lastMessageChannelType", "lastMessageChannelAccount", "lastMessageFrom", "lastMessageDir", "status", "updater", "creator", "updatedAt", "createdAt", "nextStatusTime", "closedTime", "__v", "firstMessageChat", "lastMessageChat", "conversationStatus", "key", "lastSLA", "type", "queue", "agent", "lastMessageTo", "disposition"
+2. Timestamp = "createdAt", "updatedAt", "nextStatusTime", "closedTime"
+
+Conversation SLA Logs
+1. All = "_id", "serviceLevelAggrement", "conversation", "status", "updater", "creator", "updatedAt", "createdAt", "isSlaSuccess", "__v"
+2. Timestamp = "createdAt", "updatedAt"
+
+Dispositions
+1. All = "_id", "key", "name" , "queue", "status", "updater", "creator", "updatedAt", "createdAt", "__v"
+2. Timestamp = "createdAt", "updatedAt"

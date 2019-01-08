@@ -1,0 +1,81 @@
+[{
+	"_id" : "5b43368b33e5f400a0fd2cd8",
+	"key" : "new sign up",
+	"name" : "New Sign Up",
+	"queue" : "5b43362f956d0b0010a64eae",
+	"status" : "active",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-09T10:18:51.957Z",
+	"createdAt" : "2018-07-09T10:18:51.957Z",
+	"__v" : 0
+},
+{
+	"_id" : "5b43368b33e5f400a0fd2cd9",
+	"key" : "general sales",
+	"name" : "General Sales",
+	"queue" : "5b43362f956d0b0010a64eae",
+	"status" : "active",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-09T10:18:51.971Z",
+	"createdAt" : "2018-07-09T10:18:51.971Z",
+	"__v" : 0
+},
+{
+	"_id" : "5b43368b33e5f400a0fd2cde",
+	"key" : "product enquiry",
+	"name" : "Product Enquiry",
+	"queue" : "5b43362f956d0b0010a64eae",
+	"status" : "active",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-09T10:18:51.975Z",
+	"createdAt" : "2018-07-09T10:18:51.975Z",
+	"__v" : 0
+},
+{
+	"_id" : "5b43368b33e5f400a0fd2cdb",
+	"key" : "plan enquiry",
+	"name" : "Plan Enquiry",
+	"queue" : "5b43362f956d0b0010a64eae",
+	"status" : "active",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-09T10:18:51.975Z",
+	"createdAt" : "2018-07-09T10:18:51.975Z",
+	"__v" : 0
+},
+{
+	"_id" : "5b61564bd701b9188a67392b",
+	"key" : "feedback",
+	"name" : "Feedback",
+	"queue" : "5b4d55ad1ea3380011d856de",
+	"status" : "active",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-25T08:34:50.428Z",
+	"createdAt" : "2018-07-25T08:34:50.428Z"
+},
+{
+	"_id" : "5bbb2dab50cae030140290d8",
+	"key" : "general enquiry",
+	"name" : "General Enquiry",
+	"queue" : "5bb5fa509c12320010d49a40",
+	"status" : "active",
+	"updater" : "dhian.pratama@mavenlab.com",
+	"creator" : "dhian.pratama@mavenlab.com",
+	"updatedAt" : "2018-07-25T08:34:50.428Z",
+	"createdAt" : "2018-07-25T08:34:50.428Z"
+},
+{
+	"_id" : "5bbd6327f59fa07027969f9e",
+	"key" : "sample disposition",
+	"name" : "Sample Disposition",
+	"queue" : "5bb5fa3d9c12320010d49a33",
+	"status" : "active",
+	"updater" : "mega@mavenlab.com",
+	"creator" : "mega@mavenlab.com",
+	"updatedAt" : "2018-07-25T08:34:50.428Z",
+	"createdAt" : "2018-07-25T08:34:50.428Z"
+}]
