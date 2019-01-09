@@ -2,115 +2,143 @@
 // TODO: Check SQL type then fix CTE 
 
 module.exports.getForecastQuery = () => `WITH chatConversations AS (
-        SELECT chat.conversation AS conversation_id,
-        year(chat.createdAt) AS year, 
-        month(chat.createdAt) AS month,
-        day(chat.createdAt) AS day,
-        hour(chat.createdAt) AS hour,
-        COUNT(chat.conversation) AS numChats
-      
-        FROM (chat INNER JOIN conversation ON chat.conversation = conversation.uuid)
-        
-        GROUP BY year(conversation.createdAt) AS year, 
-        month(conversation.createdAt) AS month,
-        day(conversation.createdAt) AS day,
-        hour(conversation.createdAt) AS hour,
-        conversation.uuid
-      )
-      
-      SELECT 
-      year(CONVO.createdAt) AS year, month(CONVO.createdAt) AS month,
-      day(CONVO.createdAt) AS day,
-      hour(CONVO.createdAt) AS hour,
-      COUNT(DISTINCT CONVO.uuid) AS "numConvo",
-      
-      -- numConvo
-      COUNT (IF(channelType.name = 'Telegram' OR channelType.name = 'SMS' OR channelType.name = 'Facebook', 1, NULL)) AS chatNumConvos,
-      COUNT (IF(channelType.name = 'Email', 1, NULL)) AS emailNumConvos,
-      COUNT (IF(channelType.name = 'Voice', 1, NULL)) AS voiceNumConvos,
-      
-      -- avrConvoDuration
-      AVG(IF(channelType.name = 'Telegram' OR channelType.name = 'SMS' OR channelType.name = 'Facebook', date_diff('minute', CONVO.createdAt, CONVO.closedTime), NULL)) AS textAvgMins,
-      AVG(IF(channelType.name = 'Email', date_diff('minute', CONVO.createdAt, CONVO.closedTime), NULL)) AS emailAvgMins,
-      AVG(IF(channelType.name = 'Voice', date_diff('minute', CONVO.createdAt, CONVO.closedTime), NULL)) AS voiceAvgMins,
-      
-      -- avrNumChatsPerConvo
-      AVG(IF(channelType.name = 'Telegram' OR channelType.name = 'SMS' OR channelType.name = 'Facebook', CHATSCONVERSATION.numChats, NULL)) AS textAvgChatsPerConvo,
-      AVG(IF(channelType.name = 'Email', CHATSCONVERSATION.numChats, NULL)) AS emailAvgChatsPerConvo,
-      
-      -- numDispositions
-      -- disposition types: dispo1, dispo2, dispo3
-      -- chats
-      COUNT(IF((channelType.name = 'Telegram' OR channelType.name = 'SMS' OR channelType.name = 'Facebook') AND DISPOSITION.name = 'dispo1', 1, NULL)),
-      COUNT(IF((channelType.name = 'Telegram' OR channelType.name = 'SMS' OR channelType.name = 'Facebook') AND DISPOSITION.name = 'dispo2', 1, NULL)),
-      COUNT(IF((channelType.name = 'Telegram' OR channelType.name = 'SMS' OR channelType.name = 'Facebook') AND DISPOSITION.name = 'dispo3', 1, NULL)),
-      -- email
-      COUNT(IF(channelType.name = 'Email' AND DISPOSITION.name = 'dispo1', 1, NULL)),
-      COUNT(IF(channelType.name = 'Email' AND DISPOSITION.name = 'dispo2', 1, NULL)),
-      COUNT(IF(channelType.name = 'Email' AND DISPOSITION.name = 'dispo3', 1, NULL)),
-      -- voice 
-      COUNT(IF(channelType.name = 'Voice' AND DISPOSITION.name = 'dispo1', 1, NULL)),
-      COUNT(IF(channelType.name = 'Voice' AND DISPOSITION.name = 'dispo2', 1, NULL)),
-      COUNT(IF(channelType.name = 'Voice' AND DISPOSITION.name = 'dispo3', 1, NULL))
-      
-      
-      FROM (conversation AS CONVO 
-        INNER JOIN channelType ON CONVO.lastMessageChannelType = channelType.uuid 
-        INNER JOIN CHATSCONVERSATION AS CHATSCONVERSATION ON CONVO.uuid = CHATSCONVERSATION.conversation_id
-        INNER JOIN disposition AS DISPOSITION ON CONVO.disposition = DISPOSITION.key) 
-      
-      GROUP BY year(CONVO.conversationcreatedAt), month(CONVO.conversationcreatedAt), day(CONVO.conversationcreatedAt), hour(CONVO.conversationcreatedAt)
-      ORDER BY year(CONVO.conversationcreatedAt), month(CONVO.conversationcreatedAt), day(CONVO.conversationcreatedAt), hour(CONVO.conversationcreatedAt);`
+  SELECT year(moobi_chats.createdAt) AS year, 
+  month(moobi_chats.createdAt) AS month,
+  day(moobi_chats.createdAt) AS day,
+  hour(moobi_chats.createdAt) AS hour,
+  COUNT(moobi_chats.conversation) AS numChats,
+  moobi_chats.conversation AS conversation_id
+
+  FROM (moobi_chats INNER JOIN moobi_conversations ON moobi_chats.conversation = moobi_conversations._id)
+  
+  GROUP BY
+  year(moobi_chats.createdAt), 
+  month(moobi_chats.createdAt),
+  day(moobi_chats.createdAt),
+  hour(moobi_chats.createdAt),
+  moobi_chats.conversation
+)
+
+SELECT 
+  year(CONVO.createdAt) AS year, month(CONVO.createdAt) AS month,
+  day(CONVO.createdAt) AS day,
+  hour(CONVO.createdAt) AS hour,
+  COUNT(DISTINCT CONVO._id) AS "numConvo",
+  
+  -- numConvo
+  COUNT (IF(moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram', 1, NULL)) AS chatNumConvos,
+  COUNT (IF(moobi_channelTypes.name = 'Email', 1, NULL)) AS emailNumConvos,
+  COUNT (IF(moobi_channelTypes.name = 'Voice', 1, NULL)) AS voiceNumConvos,
+  
+  -- avrConvoDuration
+  AVG(IF(moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram', date_diff('minute', CONVO.createdAt, CONVO.closedTime), NULL)) AS textAvgMins,
+  AVG(IF(moobi_channelTypes.name = 'Email', date_diff('minute', CONVO.createdAt, CONVO.closedTime), NULL)) AS emailAvgMins,
+  AVG(IF(moobi_channelTypes.name = 'Voice', date_diff('minute', CONVO.createdAt, CONVO.closedTime), NULL)) AS voiceAvgMins,
+  
+  -- avrNumChatsPerConvo
+  AVG(IF(moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram', CHATSCONVERSATION.numChats, NULL)) AS textAvgChatsPerConvo,
+  AVG(IF(moobi_channelTypes.name = 'Email', CHATSCONVERSATION.numChats, NULL)) AS emailAvgChatsPerConvo,
+  
+  -- numDispositions
+  -- chats
+  COUNT(IF((moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram') AND DISPOSITION.name = 'Plan Enquiry', 1, NULL)),
+  COUNT(IF((moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram') AND DISPOSITION.name = 'New Sign Up', 1, NULL)),
+  COUNT(IF((moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram') AND DISPOSITION.name = 'General Sales', 1, NULL)),
+  COUNT(IF((moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram') AND DISPOSITION.name = 'Sample Disposition', 1, NULL)),
+  COUNT(IF((moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram') AND DISPOSITION.name = 'Product Enquiry', 1, NULL)),
+  COUNT(IF((moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram') AND DISPOSITION.name = 'General Enquiry', 1, NULL)),
+  COUNT(IF((moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram') AND DISPOSITION.name = 'Feedback', 1, NULL)),
+  COUNT(IF((moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram') AND DISPOSITION.name = 'Plan Enquiry', 1, NULL)) AS dispositionChatPlanEnquiry,
+  COUNT(IF((moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram') AND DISPOSITION.name = 'New Sign Up', 1, NULL)) AS dispositionChatNewSignUp,
+  COUNT(IF((moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram') AND DISPOSITION.name = 'General Sales', 1, NULL)) AS dispositionChatGeneralSales,
+  COUNT(IF((moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram') AND DISPOSITION.name = 'Sample Disposition', 1, NULL)) AS dispositionChatSampleDisposition,
+  COUNT(IF((moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram') AND DISPOSITION.name = 'Product Enquiry', 1, NULL)) AS dispositionChatProductEnquiry,
+  COUNT(IF((moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram') AND DISPOSITION.name = 'General Enquiry', 1, NULL)) AS dispositionChatGeneralEnquiry,
+  COUNT(IF((moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram') AND DISPOSITION.name = 'Feedback', 1, NULL)) AS dispositionChatFeedback,
+  -- email
+  COUNT(IF(moobi_channelTypes.name = 'Email' AND DISPOSITION.name = 'Plan Enquiry', 1, NULL)) AS dispositionEmailPlanEnquiry,
+  COUNT(IF(moobi_channelTypes.name = 'Email' AND DISPOSITION.name = 'New Sign Up', 1, NULL)) AS dispositionEmailNewSignUp,
+  COUNT(IF(moobi_channelTypes.name = 'Email' AND DISPOSITION.name = 'General Sales', 1, NULL)) AS dispositionEmailGeneralSales,
+  COUNT(IF(moobi_channelTypes.name = 'Email' AND DISPOSITION.name = 'Sample Disposition', 1, NULL)) AS dispositionEmailSampleDisposition,
+  COUNT(IF(moobi_channelTypes.name = 'Email' AND DISPOSITION.name = 'Product Enquiry', 1, NULL)) AS dispositionEmailProductEnquiry,
+  COUNT(IF(moobi_channelTypes.name = 'Email' AND DISPOSITION.name = 'General Enquiry', 1, NULL)) AS dispositionEmailGeneralEnquiry,
+  COUNT(IF(moobi_channelTypes.name = 'Email' AND DISPOSITION.name = 'Feedback', 1, NULL)) AS dispositionEmailFeedback,
+  -- voice 
+  COUNT(IF(moobi_channelTypes.name = 'Voice' AND DISPOSITION.name = 'Plan Enquiry', 1, NULL)) AS dispositionVoicePlanEnquiry,
+  COUNT(IF(moobi_channelTypes.name = 'Voice' AND DISPOSITION.name = 'New Sign Up', 1, NULL)) AS dispositionVoiceNewSignUp,
+  COUNT(IF(moobi_channelTypes.name = 'Voice' AND DISPOSITION.name = 'General Sales', 1, NULL)) AS dispositionVoiceGeneralSales,
+  COUNT(IF(moobi_channelTypes.name = 'Voice' AND DISPOSITION.name = 'Sample Disposition', 1, NULL)) AS dispositionVoiceSampleDisposition,
+  COUNT(IF(moobi_channelTypes.name = 'Voice' AND DISPOSITION.name = 'Product Enquiry', 1, NULL)) AS dispositionVoiceProductEnquiry,
+  COUNT(IF(moobi_channelTypes.name = 'Voice' AND DISPOSITION.name = 'General Enquiry', 1, NULL)) AS dispositionVoiceGeneralEnquiry,
+  COUNT(IF(moobi_channelTypes.name = 'Voice' AND DISPOSITION.name = 'Feedback', 1, NULL)) AS dispositionVoiceFeedback
+  
+
+FROM (moobi_conversations AS CONVO 
+  INNER JOIN moobi_channelTypes ON CONVO.lastMessageChannelType = moobi_channelTypes._id 
+  INNER JOIN chatConversations AS CHATSCONVERSATION ON CONVO._id = CHATSCONVERSATION.conversation_id
+  INNER JOIN moobi_dispositions AS DISPOSITION ON CONVO.disposition = DISPOSITION._id
+) 
+  
+GROUP BY year(CONVO.createdAt), month(CONVO.createdAt), day(CONVO.createdAt), hour(CONVO.createdAt)
+ORDER BY year(CONVO.createdAt), month(CONVO.createdAt), day(CONVO.createdAt), hour(CONVO.createdAt);`
 
 
 module.exports.getRecommendationQuery = () => `WITH channelAgnostic AS (
-  SELECT CHAT.conversation,
+  SELECT CHAT.conversation AS conversation_key,
   year(CHAT.createdAt) AS year, 
   month(CHAT.createdAt) AS month,
   day(CHAT.createdAt) AS day,
   hour(CHAT.createdAt) AS hour,
-  COUNT(DISTINCT CHAT.agents) AS numAgents,
+  COUNT(DISTINCT CHAT.agent) AS numAgents,
   COUNT(IF(CONVERSATION.abandoned = false, 1, NULL)) AS numConvosHandled,
   CHAT.channel AS channel,
   CHAT.createdAt AS createdAt
   FROM (
-    chat AS CHAT
-    INNER JOIN conversation AS CONVERSATION ON CONVERSATION.uuid = CHAT.conversation
+    moobi_chats AS CHAT
+    INNER JOIN moobi_conversations AS CONVERSATION ON CONVERSATION._id = CHAT.conversation
   )
-  GROUP BY year(CHAT.createdAt), month(CHAT.createdAt), day(CHAT.createdAt), hour(CHAT.createdAt), channel
+  GROUP BY year(CHAT.createdAt), month(CHAT.createdAt), day(CHAT.createdAt), hour(CHAT.createdAt), channel, CHAT.conversation, CHAT.createdAt
 )
 
 SELECT channelAgnostic.year AS year,
 channelAgnostic.month AS month,
 channelAgnostic.day AS day,
 channelAgnostic.hour AS hour,
-channelAgnostic.channel AS channel,
 
 -- numAgents
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook', channelAgnostic.numAgents, NULL)) AS numAgentsText,
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Email', channelAgnostic.numAgents, NULL)) AS numAgentsTextEmail, 
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Email' OR channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numAgentsTextEmailVoice,  
+COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line', channelAgnostic.numAgents, NULL)) AS numAgentsText,
+COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Email', channelAgnostic.numAgents, NULL)) AS numAgentsTextEmail, 
+COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Email' OR channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numAgentsTextEmailVoice,  
 COUNT(IF(channel = 'Email', channelAgnostic.numAgents, NULL)) AS numAgentsEmail,
 COUNT(IF(channel = 'Email' OR channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numAgentsEmailVoice,
-COUNT(IF(channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numVoice,  
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numAgentsTextVoice,
+COUNT(IF(channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numAgentsVoice,  
+COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numAgentsTextVoice,
 
 -- numConvoHandled
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledText,
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Email', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledTextEmail, 
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Email' OR channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledTextEmailVoice,  
+COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledText,
+COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Email', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledTextEmail,
+COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Email' OR channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledTextEmailVoice,
 COUNT(IF(channel = 'Email', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledEmail,
 COUNT(IF(channel = 'Email' OR channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledEmailVoice,
-COUNT(IF(channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numVoice,  
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledTextVoice,
+COUNT(IF(channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledVoice,
+COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledTextVoice,
 
 -- percentageMetSLA
-COUNT(IF(channel = 'Email' AND conversationSlaLog.isSlaSuccess = true, 1, NULL))/COUNT(IF(channel = 'Email', 1, NULL)) AS emailPercentageSLA,
-COUNT(IF(channel = 'Voice' AND conversationSlaLog.isSlaSuccess = true, 1, NULL))/COUNT(IF(channel = 'Voice', 1, NULL)) AS voicePercentageSLA,
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' AND conversationSlaLog.isSlaSuccess = true, 1, NULL))/COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook', 1, NULL)) AS textPercentageSLA
+CAST(COUNT(IF(channel = 'Email' AND conversationSlaLog.isSlaSuccess = true, 1, NULL)) AS decimal(10,4))/CAST(NULLIF(COUNT(IF(channel = 'Email', 1, NULL)), 0) AS decimal(10,4)) * 100 AS emailPercentageSLA,
+CAST(COUNT(IF(channel = 'Voice' AND conversationSlaLog.isSlaSuccess = true, 1, NULL)) AS decimal(10,4))/CAST(NULLIF(COUNT(IF(channel = 'Voice', 1, NULL)), 0) AS decimal(10,4)) * 100 AS voicePercentageSLA,
+CAST(COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' AND conversationSlaLog.isSlaSuccess = true, 1, NULL)) AS decimal(10,4))/CAST(NULLIF(COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line', 1, NULL)), 0) AS decimal(10,4)) * 100 AS textPercentageSLA
 
 FROM (
   channelAgnostic 
-  INNER JOIN conversation-sla-log AS conversationSlaLog ON channelAgnostic.conversation = conversationSlaLog.conversation
+  INNER JOIN moobi_conversationslalogs AS conversationSlaLog ON channelAgnostic.conversation_key = conversationSlaLog.conversation
 )
-ORDER BY year(CHAT.createdAt), month(CHAT.createdAt), day(CHAT.createdAt), hour(CHAT.createdAt);`
+
+GROUP BY channelAgnostic.year,
+channelAgnostic.month,
+channelAgnostic.day,
+channelAgnostic.hour
+ORDER BY channelAgnostic.year,
+channelAgnostic.month,
+channelAgnostic.day,
+channelAgnostic.hour;`
+

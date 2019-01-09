@@ -5,7 +5,7 @@ const queries = require('./queries.js')
 const awsConfig  = JSON.parse(fs.readFileSync('./config.json'));
 const clientConfig = {
   bucketUri: 's3://athena-software-query-results',
-  database: 'scrio_upload'
+  database: 'scrio_data'
 }
 
 const client = athena.createClient(clientConfig, awsConfig);
@@ -64,10 +64,17 @@ ORDER BY year(conversation_createdat), month(conversation_createdat), day(conver
 const forecastQuery = queries.getForecastQuery();
 const recommendationQuery = queries.getRecommendationQuery();
 
-client.execute(athenaForecastQuery).toPromise()
+client.execute(forecastQuery).toPromise()
 .then(data => {
-  fs.writeFileSync('logs.txt', JSON.stringify(data));
-  console.log('execution successful!')
+  fs.writeFileSync('forecastQueryLogs.json', JSON.stringify(data));
+  console.log('forecast query successful!')
+})
+.catch(err => console.log(err));
+
+client.execute(recommendationQuery).toPromise()
+.then(result => {
+  fs.writeFileSync('recommendationQueryLogs.json', JSON.stringify(result));
+  console.log("recommendation query successful")
 })
 .catch(err => console.log(err));
 
