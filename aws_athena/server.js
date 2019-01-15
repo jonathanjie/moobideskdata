@@ -10,17 +10,6 @@ const clientConfig = {
 
 const client = athena.createClient(clientConfig, awsConfig);
 
-const athenaForecastQuery = `SELECT year(conversation_createdat) AS year, month(conversation_createdat) AS month,
-day(conversation_createdat) AS day,
-hour(conversation_createdat) AS hour,
-channel, COUNT(DISTINCT conversation__id) AS "numConvo",
-AVG(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook', date_diff('minute', conversation_createdat, conversation_lastmessagets), NULL)) AS textAvgMins,
-AVG(IF(channel = 'Email', date_diff('minute', conversation_createdat, conversation_lastmessagets), NULL)) AS emailAvgMins
-FROM "scrio_upload"."moobilogs" 
-GROUP BY year(conversation_createdat), month(conversation_createdat), day(conversation_createdat), hour(conversation_createdat), 
-channel
-ORDER BY year(conversation_createdat), month(conversation_createdat), day(conversation_createdat), hour(conversation_createdat);`
-
 
 /**
    * PER HOUR
@@ -67,7 +56,8 @@ const recommendationQuery = queries.getRecommendationQuery();
 client.execute(forecastQuery).toPromise()
 .then(data => {
   fs.writeFileSync('forecastQueryLogs.json', JSON.stringify(data));
-  console.log('forecast query successful!')
+  console.log('forecast query successful!');
+  console.log(data.queryExecution.ResultConfiguration.OutputLocation);
 })
 .catch(err => console.log(err));
 
@@ -75,6 +65,7 @@ client.execute(recommendationQuery).toPromise()
 .then(result => {
   fs.writeFileSync('recommendationQueryLogs.json', JSON.stringify(result));
   console.log("recommendation query successful")
+  console.log(result.queryExecution.ResultConfiguration.OutputLocation);
 })
 .catch(err => console.log(err));
 

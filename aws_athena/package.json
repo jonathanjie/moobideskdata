@@ -10,7 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "athena-client": "^2.4.0",
-    "aws-sdk": "^2.375.0",
+    "aws-sdk": "^2.388.0",
+    "axios": "^0.18.0",
     "uuid": "^3.3.2"
   }
 }
