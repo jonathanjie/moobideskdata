@@ -83,38 +83,37 @@ module.exports.getRecommendationQuery = () => `WITH channelAgnostic AS (
   day(CHAT.createdAt) AS day,
   hour(CHAT.createdAt) AS hour,
   COUNT(DISTINCT CHAT.agent) AS numAgents,
-  COUNT(IF(CONVERSATION.abandoned = false, 1, NULL)) AS numConvosHandled,
-  CHAT.channel AS channel,
-  CHAT.createdAt AS createdAt
+  COUNT(IF(CONVERSATION.abandoned IS NOT NULL AND CONVERSATION.abandoned = false, 1, NULL)) AS numConvosHandled,
+  CHAT.channel AS channel
   FROM (
     moobi_chats AS CHAT
     INNER JOIN moobi_conversations AS CONVERSATION ON CONVERSATION._id = CHAT.conversation
   )
-  GROUP BY year(CHAT.createdAt), month(CHAT.createdAt), day(CHAT.createdAt), hour(CHAT.createdAt), channel, CHAT.conversation, CHAT.createdAt
+  GROUP BY year(CHAT.createdAt), month(CHAT.createdAt), day(CHAT.createdAt), hour(CHAT.createdAt), channel, CHAT.conversation
 )
 
 SELECT channelAgnostic.year AS year,
 channelAgnostic.month AS month,
 channelAgnostic.day AS day,
-channelAgnostic.hour AS hour,
+channelAgnostic.hour AS hour
 
 -- numAgents
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line', channelAgnostic.numAgents, NULL)) AS numAgentsText,
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Email', channelAgnostic.numAgents, NULL)) AS numAgentsTextEmail, 
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Email' OR channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numAgentsTextEmailVoice,  
-COUNT(IF(channel = 'Email', channelAgnostic.numAgents, NULL)) AS numAgentsEmail,
-COUNT(IF(channel = 'Email' OR channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numAgentsEmailVoice,
-COUNT(IF(channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numAgentsVoice,  
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numAgentsTextVoice,
+SUM(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line', channelAgnostic.numAgents, NULL)) AS numAgentsText,
+SUM(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Email', channelAgnostic.numAgents, NULL)) AS numAgentsTextEmail, 
+SUM(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Email' OR channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numAgentsTextEmailVoice,  
+SUM(IF(channel = 'Email', channelAgnostic.numAgents, NULL)) AS numAgentsEmail,
+SUM(IF(channel = 'Email' OR channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numAgentsEmailVoice,
+SUM(IF(channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numAgentsVoice,  
+SUM(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Voice', channelAgnostic.numAgents, NULL)) AS numAgentsTextVoice,
 
 -- numConvoHandled
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledText,
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Email', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledTextEmail,
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Email' OR channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledTextEmailVoice,
-COUNT(IF(channel = 'Email', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledEmail,
-COUNT(IF(channel = 'Email' OR channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledEmailVoice,
-COUNT(IF(channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledVoice,
-COUNT(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledTextVoice,
+SUM(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledText,
+SUM(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Email', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledTextEmail,
+SUM(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Email' OR channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledTextEmailVoice,
+SUM(IF(channel = 'Email', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledEmail,
+SUM(IF(channel = 'Email' OR channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledEmailVoice,
+SUM(IF(channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledVoice,
+SUM(IF(channel = 'Telegram' OR channel = 'SMS' OR channel = 'Facebook' OR channel = 'Web Chat' OR channel = 'Twitter' OR channel = 'Instagram' OR channel = 'WhatsApp' OR channel = 'Line' OR channel = 'Voice', channelAgnostic.numConvosHandled, NULL)) AS numConvosHandledTextVoice,
 
 -- percentageMetSLA
 CAST(COUNT(IF(channel = 'Email' AND conversationSlaLog.isSlaSuccess = true, 1, NULL)) AS decimal(10,4))/CAST(NULLIF(COUNT(IF(channel = 'Email', 1, NULL)), 0) AS decimal(10,4)) AS emailPercentageSLA,
@@ -134,4 +133,3 @@ ORDER BY channelAgnostic.year,
 channelAgnostic.month,
 channelAgnostic.day,
 channelAgnostic.hour;`
-
