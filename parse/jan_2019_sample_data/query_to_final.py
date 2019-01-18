@@ -14,6 +14,9 @@ def convert_query(source, output, fields):
     convosText = set()
     convosVoice = set()
     convosEmail = set()
+    slaText = set()
+    slaVoice = set()
+    slaEmail = set()
 
     temp_loaded_csv = loaded_csv
     first_line = next(temp_loaded_csv)
@@ -33,6 +36,7 @@ def convert_query(source, output, fields):
             d["month"] = prev_month
             d["day"] = prev_day
             d["hour"] = prev_hour
+
             d["numAgentsText"] = len(agentsText)
             d["numAgentsVoice"] = len(agentsVoice)
             d["numAgentsEmail"] = len(agentsEmail)
@@ -40,13 +44,20 @@ def convert_query(source, output, fields):
             d["numAgentsTextVoice"] = len(agentsText) + len(agentsVoice)
             d["numAgentsVoiceEmail"] = len(agentsVoice) + len(agentsEmail)
             d["numAgentsTextVoiceEmail"] = len(agentsText) + len(agentsVoice) + len(agentsEmail)
+
             d["numConvosText"] = len(convosText)
             d["numConvosVoice"] = len(convosVoice)
             d["numConvosEmail"] = len(convosEmail)
-            d["numConvosTextEmail"] = len(agentsText) + len(agentsEmail)
-            d["numConvosTextVoice"] = len(agentsText) + len(agentsVoice)
-            d["numConvosVoiceEmail"] = len(agentsVoice) + len(agentsEmail)
-            d["numConvosTextVoiceEmail"] = len(agentsText) + len(agentsVoice) + len(agentsEmail)
+            d["numConvosTextEmail"] = len(convosText) + len(convosEmail)
+            d["numConvosTextVoice"] = len(convosText) + len(convosVoice)
+            d["numConvosVoiceEmail"] = len(convosVoice) + len(convosEmail)
+            d["numConvosTextVoiceEmail"] = len(convosText) + len(convosVoice) + len(convosEmail)
+
+            if (len(convosText) != 0):
+                d["textSla"] = (float(len(slaText))) / (len(convosText))
+            else:
+                d["textSla"] = "N.A."
+            
             writer.writerow(d)
             
             agentsText = set()
@@ -55,18 +66,31 @@ def convert_query(source, output, fields):
             convosText = set()
             convosVoice = set()
             convosEmail = set()
+            slaText = set()
+            slaVoice = set()
+            slaEmail = set()
 
         if (row["channel"] == "Telegram" or row["channel"] == "SMS" or row["channel"] == "Facebook" or row["channel"] == "Web Chat" or row["channel"] == "Twitter" or row["channel"] == "Instagram" or row["channel"] == "WhatsApp" or row["channel"] == "Line"):
             agentsText.add(row["agent"])
-            convosText.add(row["conversation_key"])
+            if (row["abandoned"] == "false" or row["abandoned"] == ""):
+                convosText.add(row["conversation_key"])
+            if (row["sla"] == "true"):
+                slaText.add(row["conversation_key"])
+
 
         if (row["channel"] == "Voice"):
             agentsVoice.add(row["agent"])
-            convosVoice.add(row["conversation_key"])
+            if (row["abandoned"] == "false" or row["abandoned"] == ""):
+                convosVoice.add(row["conversation_key"])
+            if (row["sla"] == "true"):
+                slaVoice.add(row["conversation_key"])
 
         if (row["channel"] == "Email"):
             agentsEmail.add(row["agent"])
-            convosEmail.add(row["conversation_key"])
+            if (row["abandoned"] == "false" or row["abandoned"] == ""):
+                convosEmail.add(row["conversation_key"])
+            if (row["sla"] == "true"):
+                slaEmail.add(row["conversation_key"])
 
         prev_year = cur_year
         prev_month = cur_month
@@ -76,5 +100,5 @@ def convert_query(source, output, fields):
 if __name__ == "__main__":
     fields = ["year", "month", "day", "hour", "numAgentsText", "numAgentsVoice", "numAgentsEmail", "numAgentsTextEmail",
                 "numAgentsTextVoice", "numAgentsVoiceEmail", "numAgentsTextVoiceEmail", "numConvosText", "numConvosVoice",
-                "numConvosEmail", "numConvosTextEmail", "numConvosTextVoice", "numConvosVoiceEmail", "numConvosTextVoiceEmail"]
-    convert_query("./query_result.csv", "./data.csv", fields = fields)
+                "numConvosEmail", "numConvosTextEmail", "numConvosTextVoice", "numConvosVoiceEmail", "numConvosTextVoiceEmail", "textSla", "voiceSla", "emailSla"]
+    convert_query("./query_data/query_result.csv", "./final_recommendation.csv", fields = fields)
