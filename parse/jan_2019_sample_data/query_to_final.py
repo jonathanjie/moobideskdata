@@ -1,3 +1,4 @@
+from __future__ import division
 import csv
 
 def convert_query(source, output, fields):
@@ -54,9 +55,23 @@ def convert_query(source, output, fields):
             d["numConvosTextVoiceEmail"] = len(convosText) + len(convosVoice) + len(convosEmail)
 
             if (len(convosText) != 0):
-                d["textSla"] = (float(len(slaText))) / (len(convosText))
+                d["textSla"] = len(slaText) / (len(convosText))
             else:
-                d["textSla"] = "N.A."
+                d["textSla"] = "~"
+
+            if (len(convosVoice) != 0):
+                if (len(slaVoice) != len(convosVoice)):
+                    print("SLA: " + str(len(slaVoice)))
+                    print("Convos: " + str(len(convosVoice)))
+                    print((len(slaVoice)) / (len(convosVoice)))
+                d["voiceSla"] = (len(slaVoice)) / (len(convosVoice))
+            else:
+                d["voiceSla"] = "~"
+
+            if (len(convosEmail) != 0):
+                d["emailSla"] = (len(slaEmail)) / (len(convosEmail))
+            else:
+                d["emailSla"] = "~"
             
             writer.writerow(d)
             
@@ -74,23 +89,23 @@ def convert_query(source, output, fields):
             agentsText.add(row["agent"])
             if (row["abandoned"] == "false" or row["abandoned"] == ""):
                 convosText.add(row["conversation_key"])
-            if (row["sla"] == "true"):
-                slaText.add(row["conversation_key"])
+                if (row["sla"] == "true"):
+                    slaText.add(row["conversation_key"])
 
 
         if (row["channel"] == "Voice"):
             agentsVoice.add(row["agent"])
             if (row["abandoned"] == "false" or row["abandoned"] == ""):
                 convosVoice.add(row["conversation_key"])
-            if (row["sla"] == "true"):
-                slaVoice.add(row["conversation_key"])
+                if (row["sla"] == "true"):
+                    slaVoice.add(row["conversation_key"])
 
         if (row["channel"] == "Email"):
             agentsEmail.add(row["agent"])
             if (row["abandoned"] == "false" or row["abandoned"] == ""):
                 convosEmail.add(row["conversation_key"])
-            if (row["sla"] == "true"):
-                slaEmail.add(row["conversation_key"])
+                if (row["sla"] == "true"):
+                    slaEmail.add(row["conversation_key"])
 
         prev_year = cur_year
         prev_month = cur_month
