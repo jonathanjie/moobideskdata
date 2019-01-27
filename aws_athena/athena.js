@@ -25,7 +25,7 @@ athena.createNamedQuery(recommendationQuery, (err, data) => {
 });
 
 const params = {
-    QueryString: query.getRecommendationQuery(),
+    QueryString: query.getForecastQuery(),
     ResultConfiguration: {
         OutputLocation: 's3://athena-software-query-results/',
     },
@@ -39,11 +39,11 @@ const otherLambdaLink = "https://webhook.site/8a23cec5-ac3c-4213-b9a0-451585bc5d
 athena.startQueryExecution(params, (err, data) => { 
     if (err) console.log(err, err.stack); // an error occurred
     else {
-        axios.post(otherLambdaLink, {
-            fileName: data.QueryExecutionId + ".csv"
-        })
-        .then(response => console.log(`${data.QueryExecutionId}.csv sent`))
-        .catch(err => console.log(err, err.stack));
+        // axios.post(otherLambdaLink, {
+        //     fileName: data.QueryExecutionId + ".csv"
+        // })
+        // .then(response => console.log(`${data.QueryExecutionId}.csv sent`))
+        // .catch(err => console.log(err, err.stack));
 
         console.log(data);           
     }

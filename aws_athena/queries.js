@@ -10,7 +10,6 @@ module.exports.getForecastQuery = () => `WITH chatConversations AS (
   moobi_chats.conversation AS conversation_id
 
   FROM (moobi_chats INNER JOIN moobi_conversations ON moobi_chats.conversation = moobi_conversations._id)
-  
   GROUP BY
   year(moobi_chats.createdAt), 
   month(moobi_chats.createdAt),
@@ -23,21 +22,21 @@ SELECT
   year(CONVO.createdAt) AS year, month(CONVO.createdAt) AS month,
   day(CONVO.createdAt) AS day,
   hour(CONVO.createdAt) AS hour,
-  COUNT(DISTINCT CONVO._id) AS "numConvo",
+  COUNT(CONVO._id) AS "numConvo",
   
   -- numConvo
-  COUNT (IF(moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram', 1, NULL)) AS chatNumConvos,
-  COUNT (IF(moobi_channelTypes.name = 'Email', 1, NULL)) AS emailNumConvos,
-  COUNT (IF(moobi_channelTypes.name = 'Voice', 1, NULL)) AS voiceNumConvos,
+  COUNT(IF(moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram', CONVO._id, NULL)) AS chatNumConvos,
+  COUNT(IF(moobi_channelTypes.name = 'Email', CONVO._id, NULL)) AS emailNumConvos,
+  COUNT(IF(moobi_channelTypes.name = 'Voice', CONVO._id, NULL)) AS voiceNumConvos,
   
   -- avrConvoDuration
-  AVG(IF(moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram', date_diff('minute', CONVO.createdAt, CONVO.closedTime), NULL)) AS textAvgMins,
-  AVG(IF(moobi_channelTypes.name = 'Email', date_diff('minute', CONVO.createdAt, CONVO.closedTime), NULL)) AS emailAvgMins,
-  AVG(IF(moobi_channelTypes.name = 'Voice', date_diff('minute', CONVO.createdAt, CONVO.closedTime), NULL)) AS voiceAvgMins,
+  ROUND(AVG(IF(moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram', date_diff('minute', CONVO.createdAt, CONVO.closedTime), NULL)), 2) AS textAvgMins,
+  ROUND(AVG(IF(moobi_channelTypes.name = 'Email', date_diff('minute', CONVO.createdAt, CONVO.closedTime), NULL)), 2) AS emailAvgMins,
+  ROUND(AVG(IF(moobi_channelTypes.name = 'Voice', date_diff('minute', CONVO.createdAt, CONVO.closedTime), NULL)), 2) AS voiceAvgMins,
   
   -- avrNumChatsPerConvo
-  AVG(IF(moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram', CHATSCONVERSATION.numChats, NULL)) AS textAvgChatsPerConvo,
-  AVG(IF(moobi_channelTypes.name = 'Email', CHATSCONVERSATION.numChats, NULL)) AS emailAvgChatsPerConvo,
+  ROUND(AVG(IF(moobi_channelTypes.name = 'Telegram' OR moobi_channelTypes.name = 'SMS' OR moobi_channelTypes.name = 'Facebook' OR moobi_channelTypes.name = 'WhatsApp' OR moobi_channelTypes.name = 'Line' OR moobi_channelTypes.name = 'Web Chat' OR moobi_channelTypes.name = 'WeChat' OR moobi_channelTypes.name = 'Twitter' OR moobi_channelTypes.name = 'Instagram', CHATSCONVERSATION.numChats, NULL)), 2) AS textAvgChatsPerConvo,
+  ROUND(AVG(IF(moobi_channelTypes.name = 'Email', CHATSCONVERSATION.numChats, NULL)), 2) AS emailAvgChatsPerConvo,
   
   -- numDispositions
   -- chats
