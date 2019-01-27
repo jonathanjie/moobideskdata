@@ -1,6 +1,16 @@
 import csv
 import datetime
 import calendar
+import numpy as np
+
+
+def parseForecastQuery(inputFile, outputFile, fields):
+    fillMissingHours(inputFile, outputFile, fields)
+    data = np.genfromtxt(outputFile, delimiter=',')
+
+    for row in data:
+        
+
 
 def fillMissingHours(inputFile, outputFile, fields):
     csv_file = open(inputFile, mode='r')
@@ -88,6 +98,7 @@ def fillMissingHours(inputFile, outputFile, fields):
                 # d['textAvgMins'] = 0
                 # d['emailAvgMins'] = 0
                 # d['voiceAvgMins'] = 0
+
                 # d['textAvgChatsPerConvo'] = 0
                 # d['emailAvgChatsPerConvo'] = 0
                 
@@ -132,6 +143,21 @@ def getDifferenceHours(date1, date2):
 
 def getDateLastSundayMonth(month, year):
     return max(week[-1] for week in calendar.monthcalendar(year, month))
+
+def getMeanAvgMins(contact_type, month, year):
+    if contact_type == 'chat':
+
+    elif contact_type == 'email':
+
+    elif contact_type == 'voice':
+
+    else:
+        raise ValueError(contact_type, " is invalid, use chat/email/voice")
+
+# get avg from start_day until end_day inclusive
+def getAvgInWeek(field, year, month, start_day, end_day):
+    for ()
+
 
 if __name__ == "__main__":
     fields = ["year","month","day","hour","numConvo","chatNumConvos",
