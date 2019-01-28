@@ -289,11 +289,3 @@ if __name__ == "__main__":
             "dispositionVoiceGeneralSales","dispositionVoiceSampleDisposition","dispositionVoiceProductEnquiry",
             "dispositionVoiceGeneralEnquiry","dispositionVoiceFeedback"]
     parseForecastQuery('./test.csv', './output.csv', fields, 7, 2018, 12)
-
-
-
-
-
-
-
-
